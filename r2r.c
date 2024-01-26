@@ -30,6 +30,13 @@ void print_bin (VALUE_T value)
 {
     int i;
     int l = 0;
+
+    if (value == 0)
+    {
+        printf ("0");
+        return;
+    }
+
     for (i = sizeof (value) * 8 - 1; i >= 0; i--)
     {
         int bit = (value >> i) & 1;
