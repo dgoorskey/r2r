@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra
+CFLAGS=-std=c89 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Wpedantic -g
 INSTALLDIR=~/.local/bin
 
 TARGETS=b2o b2d b2h o2b o2d o2h d2b d2o d2h h2b h2o h2d

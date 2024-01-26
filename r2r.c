@@ -25,7 +25,7 @@
 #error "BIN not defined"
 #endif
 
-#define VALUE_T unsigned long long
+#define VALUE_T unsigned long
 
 void print_bin (VALUE_T value)
 {
@@ -54,29 +54,30 @@ void print_bin (VALUE_T value)
 
 void print_dec (VALUE_T value)
 {
-    printf ("%llu", value);
+    printf ("%lu", value);
 }
 
 void print_oct (VALUE_T value)
 {
-    printf ("%llo", value);
+    printf ("%lo", value);
 }
 
 void print_hex (VALUE_T value)
 {
-    printf ("%llX", value);
+    printf ("%lX", value);
 }
 
 VALUE_T parse_bin (char *str)
 {
-    long long i;
+    long l = strlen (str);
+    long i;
     char c;
     unsigned int digits = 0;
     VALUE_T value = 0;
     VALUE_T place = 1;
 
     /* check input */
-    for (i = 0; i < (long long) strlen (str); i++)
+    for (i = 0; i < l; i++)
     {
         c = str[i];
         if (c != '0' && c != '1' && c != '_' && c != '\n')
@@ -95,7 +96,7 @@ VALUE_T parse_bin (char *str)
         goto fail;
     }
 
-    for (i = strlen (str) - 1; i >= 0; i--)
+    for (i = l - 1; i >= 0; i--)
     {
         c = str[i];
         if (c == '0' || c == '1')
@@ -114,13 +115,14 @@ fail:
 VALUE_T parse_dec (char *str)
 {
     VALUE_T result;
+    long l = strlen (str);
     char c;
-    int i;
+    long i;
     char *literal = malloc (strlen (str));
-    int li = 0;
+    long li = 0;
 
     /* check input, copy digits to buffer */
-    for (i = 0; i < (long long) strlen (str); i++)
+    for (i = 0; i < l; i++)
     {
         c = str[i];
 
@@ -139,7 +141,7 @@ VALUE_T parse_dec (char *str)
     literal[li] = '\0';
 
     errno = 0;
-    sscanf (literal, "%llu", &result);
+    sscanf (literal, "%lu", &result);
     if (errno != 0)
     {
         perror (BIN);
@@ -157,13 +159,14 @@ fail:
 VALUE_T parse_oct (char *str)
 {
     VALUE_T result;
+    long l = strlen (str);
     char c;
-    int i;
+    long i;
     char *literal = malloc (strlen (str));
-    int li = 0;
+    long li = 0;
 
     /* check input, copy digits to buffer */
-    for (i = 0; i < (long long) strlen (str); i++)
+    for (i = 0; i < l; i++)
     {
         c = str[i];
 
@@ -182,7 +185,7 @@ VALUE_T parse_oct (char *str)
     literal[li] = '\0';
 
     errno = 0;
-    sscanf (literal, "%llo", &result);
+    sscanf (literal, "%lo", &result);
     if (errno != 0)
     {
         perror (BIN);
@@ -200,13 +203,14 @@ fail:
 VALUE_T parse_hex (char *str)
 {
     VALUE_T result;
+    long l = strlen (str);
     char c;
-    int i;
+    long i;
     char *literal = malloc (strlen (str));
-    int li = 0;
+    long li = 0;
 
     /* check input, copy digits to buffer */
-    for (i = 0; i < (long long) strlen (str); i++)
+    for (i = 0; i < l; i++)
     {
         c = str[i];
 
@@ -225,7 +229,7 @@ VALUE_T parse_hex (char *str)
     literal[li] = '\0';
 
     errno = 0;
-    sscanf (str, "%llx", &result);
+    sscanf (str, "%lx", &result);
     if (errno != 0)
     {
         perror (BIN);
@@ -273,8 +277,12 @@ void r2r (char *str)
 
 int main (int argc, char **argv)
 {
-    /* read from argv */
     int i;
+    char *line = NULL;
+    size_t length = 0;
+    int r;
+
+    /* read from argv */
     for (i = 1; i < argc; i++)
         r2r (argv [i]);
 
@@ -284,11 +292,11 @@ int main (int argc, char **argv)
     /* read from stdin */
     while (1)
     {
-        char *line = NULL;
-        size_t length = 0;
+        line = NULL;
+        length = 0;
 
         errno = 0;
-        int r = getline (&line, &length, stdin);
+        r = getline (&line, &length, stdin);
 
         if (r == -1)
         {
