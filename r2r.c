@@ -82,7 +82,7 @@ VALUE_T parse_bin (char *str)
         if (c != '0' && c != '1' && c != '_' && c != '\n')
         {
             fprintf (stderr, BIN ": invalid binary digit \"%c\" (0x%X)\n", c, c);
-            exit (EXIT_FAILURE);
+            goto fail;
         }
 
         if (c == '0' || c == '1')
@@ -92,7 +92,7 @@ VALUE_T parse_bin (char *str)
     {
         errno = ERANGE;
         perror (BIN);
-        exit (EXIT_FAILURE);
+        goto fail;
     }
 
     for (i = strlen (str) - 1; i >= 0; i--)
@@ -106,6 +106,9 @@ VALUE_T parse_bin (char *str)
     }
 
     return value;
+
+fail:
+    exit (EXIT_FAILURE);
 }
 
 VALUE_T parse_dec (char *str)
@@ -113,27 +116,42 @@ VALUE_T parse_dec (char *str)
     VALUE_T result;
     char c;
     int i;
+    char *literal = malloc (strlen (str));
+    int li = 0;
 
-    /* check input */
+    /* check input, copy digits to buffer */
     for (i = 0; i < (long long) strlen (str); i++)
     {
         c = str[i];
+
         if (!isdigit (c) && c != '_' && c != '\n')
         {
             fprintf (stderr, BIN ": invalid decimal digit \"%c\" (0x%X)\n", c, c);
-            exit (EXIT_FAILURE);
+            goto fail;
+        }
+
+        if (isdigit (c))
+        {
+            literal[li] = c;
+            li++;
         }
     }
+    literal[li] = '\0';
 
     errno = 0;
-    sscanf (str, "%llu", &result);
+    sscanf (literal, "%llu", &result);
     if (errno != 0)
     {
         perror (BIN);
-        exit (EXIT_FAILURE);
+        goto fail;
     }
 
+    free (literal);
     return result;
+
+fail:
+    free (literal);
+    exit (EXIT_FAILURE);
 }
 
 VALUE_T parse_oct (char *str)
@@ -141,27 +159,42 @@ VALUE_T parse_oct (char *str)
     VALUE_T result;
     char c;
     int i;
+    char *literal = malloc (strlen (str));
+    int li = 0;
 
-    /* check input */
+    /* check input, copy digits to buffer */
     for (i = 0; i < (long long) strlen (str); i++)
     {
         c = str[i];
+
         if (!(c >= '0' && c <= '7') && c != '_' && c != '\n')
         {
             fprintf (stderr, BIN ": invalid hex digit \"%c\" (0x%X)\n", c, c);
-            exit (EXIT_FAILURE);
+            goto fail;
+        }
+        
+        if (c >= '0' && c <= '7')
+        {
+            literal[li] = c;
+            li++;
         }
     }
+    literal[li] = '\0';
 
     errno = 0;
-    sscanf (str, "%llo", &result);
+    sscanf (literal, "%llo", &result);
     if (errno != 0)
     {
         perror (BIN);
-        exit (EXIT_FAILURE);
+        goto fail;
     }
 
+    free (literal);
     return result;
+
+fail:
+    free (literal);
+    exit (EXIT_FAILURE);
 }
 
 VALUE_T parse_hex (char *str)
@@ -169,27 +202,42 @@ VALUE_T parse_hex (char *str)
     VALUE_T result;
     char c;
     int i;
+    char *literal = malloc (strlen (str));
+    int li = 0;
 
-    /* check input */
+    /* check input, copy digits to buffer */
     for (i = 0; i < (long long) strlen (str); i++)
     {
         c = str[i];
+
         if (!isxdigit (c) && c != '_' && c != '\n')
         {
             fprintf (stderr, BIN ": invalid hex digit \"%c\" (0x%X)\n", c, c);
-            exit (EXIT_FAILURE);
+            goto fail;
+        }
+
+        if (isxdigit (c))
+        {
+            literal[li] = c;
+            li++;
         }
     }
+    literal[li] = '\0';
 
     errno = 0;
     sscanf (str, "%llx", &result);
     if (errno != 0)
     {
         perror (BIN);
-        exit (EXIT_FAILURE);
+        goto fail;
     }
 
+    free (literal);
     return result;
+
+fail:
+    free (literal);
+    exit (EXIT_FAILURE);
 }
 
 void r2r (char *str)

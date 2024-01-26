@@ -7,7 +7,7 @@ each binary performs one type of conversion.
 binaries convert values from stdin.
 each value's result is printed on its own line.
 
-underscores (`_`) are ignored.
+underscores (`_`) are ignored (e.g. `1101_0010` is read as `11010010`).
 for hex, both uppercase and lowercase letters work.
 
 ## building & installing
