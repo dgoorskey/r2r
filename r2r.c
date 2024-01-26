@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <assert.h>
 
 #define BASE_BIN 0
 #define BASE_DEC 1
@@ -28,9 +29,18 @@
 void print_bin (VALUE_T value)
 {
     int i;
+    int l = 0;
     for (i = sizeof (value) * 8 - 1; i >= 0; i--)
     {
-        printf ("%llu", (value >> i) & 1);
+        int bit = (value >> i) & 1;
+        if (bit)
+            l = 1;
+
+        /* skip leading zeroes */
+        if (!l)
+            continue;
+
+        printf ("%d", bit);
     }
 }
 
@@ -48,6 +58,7 @@ VALUE_T parse_bin (char *str)
 {
     long long i;
     char c;
+    unsigned int digits = 0;
     VALUE_T value = 0;
     VALUE_T place = 1;
 
@@ -60,6 +71,15 @@ VALUE_T parse_bin (char *str)
             fprintf (stderr, BIN ": invalid binary digit \"%c\" (0x%X)\n", c, c);
             exit (EXIT_FAILURE);
         }
+
+        if (c == '0' || c == '1')
+            digits++;
+    }
+    if (digits > sizeof (VALUE_T) * 8)
+    {
+        errno = ERANGE;
+        perror (BIN);
+        exit (EXIT_FAILURE);
     }
 
     for (i = strlen (str) - 1; i >= 0; i--)
@@ -92,7 +112,13 @@ VALUE_T parse_dec (char *str)
         }
     }
 
+    errno = 0;
     sscanf (str, "%llu", &result);
+    if (errno != 0)
+    {
+        perror (BIN);
+        exit (EXIT_FAILURE);
+    }
 
     return result;
 }
@@ -107,14 +133,20 @@ VALUE_T parse_hex (char *str)
     for (i = 0; i < (long long) strlen (str); i++)
     {
         c = str[i];
-        if (!isdigit (c) && c != '_' && c != '\n')
+        if (!isxdigit (c) && c != '_' && c != '\n')
         {
             fprintf (stderr, BIN ": invalid hex digit \"%c\" (0x%X)\n", c, c);
             exit (EXIT_FAILURE);
         }
     }
 
+    errno = 0;
     sscanf (str, "%llx", &result);
+    if (errno != 0)
+    {
+        perror (BIN);
+        exit (EXIT_FAILURE);
+    }
 
     return result;
 }
