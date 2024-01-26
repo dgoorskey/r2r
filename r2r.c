@@ -7,7 +7,8 @@
 
 #define BASE_BIN 0
 #define BASE_DEC 1
-#define BASE_HEX 2
+#define BASE_OCT 2
+#define BASE_HEX 3
 
 /* set to one of the base constants when building */
 #ifndef IBASE
@@ -54,6 +55,11 @@ void print_bin (VALUE_T value)
 void print_dec (VALUE_T value)
 {
     printf ("%llu", value);
+}
+
+void print_oct (VALUE_T value)
+{
+    printf ("%llo", value);
 }
 
 void print_hex (VALUE_T value)
@@ -130,6 +136,34 @@ VALUE_T parse_dec (char *str)
     return result;
 }
 
+VALUE_T parse_oct (char *str)
+{
+    VALUE_T result;
+    char c;
+    int i;
+
+    /* check input */
+    for (i = 0; i < (long long) strlen (str); i++)
+    {
+        c = str[i];
+        if (!(c >= '0' && c <= '7') && c != '_' && c != '\n')
+        {
+            fprintf (stderr, BIN ": invalid hex digit \"%c\" (0x%X)\n", c, c);
+            exit (EXIT_FAILURE);
+        }
+    }
+
+    errno = 0;
+    sscanf (str, "%llo", &result);
+    if (errno != 0)
+    {
+        perror (BIN);
+        exit (EXIT_FAILURE);
+    }
+
+    return result;
+}
+
 VALUE_T parse_hex (char *str)
 {
     VALUE_T result;
@@ -166,6 +200,8 @@ void r2r (char *str)
     v = parse_bin (str);
 #elif IBASE == BASE_DEC
     v = parse_dec (str);
+#elif IBASE == BASE_OCT
+    v = parse_oct (str);
 #elif IBASE == BASE_HEX
     v = parse_hex (str);
 #else
@@ -176,6 +212,8 @@ void r2r (char *str)
     print_bin (v);
 #elif OBASE == BASE_DEC
     print_dec (v);
+#elif OBASE == BASE_OCT
+    print_oct (v);
 #elif OBASE == BASE_HEX
     print_hex (v);
 #else

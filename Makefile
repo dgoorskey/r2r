@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-Wall -Wextra
 INSTALLDIR=~/.local/bin
 
-all: b2d b2h d2b d2h h2b h2d
+all: b2d b2h d2b d2h h2b h2d o2b b2o
 
 b2d:
 	$(CC) $(CFLAGS) r2r.c -o b2d -DBIN='"b2d"' -DIBASE=BASE_BIN -DOBASE=BASE_DEC
@@ -22,6 +22,13 @@ h2b:
 h2d:
 	$(CC) $(CFLAGS) r2r.c -o h2d -DBIN='"h2d"' -DIBASE=BASE_HEX -DOBASE=BASE_DEC
 
+
+o2b:
+	$(CC) $(CFLAGS) r2r.c -o o2b -DBIN='"o2b"' -DIBASE=BASE_OCT -DOBASE=BASE_BIN
+
+b2o:
+	$(CC) $(CFLAGS) r2r.c -o b2o -DBIN='"b2o"' -DIBASE=BASE_BIN -DOBASE=BASE_OCT
+
 install:
 	cp b2d $(INSTALLDIR)
 	cp b2h $(INSTALLDIR)
@@ -29,6 +36,8 @@ install:
 	cp d2h $(INSTALLDIR)
 	cp h2b $(INSTALLDIR)
 	cp h2d $(INSTALLDIR)
+	cp o2b $(INSTALLDIR)
+	cp b2o $(INSTALLDIR)
 
 uninstall:
 	rm -rf $(INSTALLDIR)/b2d
@@ -37,7 +46,9 @@ uninstall:
 	rm -rf $(INSTALLDIR)/d2h
 	rm -rf $(INSTALLDIR)/h2b
 	rm -rf $(INSTALLDIR)/h2d
+	rm -rf $(INSTALLDIR)/o2b
+	rm -rf $(INSTALLDIR)/b2o
 
 clean:
-	rm -rf b2d b2h d2b d2h h2b h2d
+	rm -rf b2d b2h d2b d2h h2b h2d o2b b2o
 
