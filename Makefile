@@ -46,7 +46,7 @@ install:
 	cp $(TARGETS) $(INSTALLDIR)
 
 uninstall:
-	rm -rf $(addprefix $(INSTALLDIR), $(TARGETS))
+	rm -rf $(addprefix $(INSTALLDIR)/, $(TARGETS))
 
 clean:
 	rm -rf $(TARGETS)
