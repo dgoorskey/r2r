@@ -2,53 +2,54 @@ CC=gcc
 CFLAGS=-Wall -Wextra
 INSTALLDIR=~/.local/bin
 
-all: b2d b2h d2b d2h h2b h2d o2b b2o
+#TARGETS=b2d b2h b2o d2b d2o d2h o2b o2d o2h h2b h2d h2o
+#TARGETS=b2d b2h d2b d2h h2b h2d o2b b2o
+TARGETS=b2o o2b b2d d2b b2h h2b o2d d2o o2h h2o d2h h2d
 
-b2d:
-	$(CC) $(CFLAGS) r2r.c -o b2d -DBIN='"b2d"' -DIBASE=BASE_BIN -DOBASE=BASE_DEC
+all: $(TARGETS)
 
-b2h:
-	$(CC) $(CFLAGS) r2r.c -o b2h -DBIN='"b2h"' -DIBASE=BASE_BIN -DOBASE=BASE_HEX
+b2o: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_BIN -DOBASE=BASE_OCT
 
-d2b:
-	$(CC) $(CFLAGS) r2r.c -o d2b -DBIN='"d2b"' -DIBASE=BASE_DEC -DOBASE=BASE_BIN
+o2b: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_OCT -DOBASE=BASE_BIN
 
-d2h:
-	$(CC) $(CFLAGS) r2r.c -o d2h -DBIN='"d2h"' -DIBASE=BASE_DEC -DOBASE=BASE_HEX
+b2d: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_BIN -DOBASE=BASE_DEC
 
-h2b:
-	$(CC) $(CFLAGS) r2r.c -o h2b -DBIN='"h2b"' -DIBASE=BASE_HEX -DOBASE=BASE_BIN
+d2b: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_DEC -DOBASE=BASE_BIN
 
-h2d:
-	$(CC) $(CFLAGS) r2r.c -o h2d -DBIN='"h2d"' -DIBASE=BASE_HEX -DOBASE=BASE_DEC
+b2h: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_BIN -DOBASE=BASE_HEX
 
+h2b: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_HEX -DOBASE=BASE_BIN
 
-o2b:
-	$(CC) $(CFLAGS) r2r.c -o o2b -DBIN='"o2b"' -DIBASE=BASE_OCT -DOBASE=BASE_BIN
+o2d: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_OCT -DOBASE=BASE_DEC
 
-b2o:
-	$(CC) $(CFLAGS) r2r.c -o b2o -DBIN='"b2o"' -DIBASE=BASE_BIN -DOBASE=BASE_OCT
+d2o: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_DEC -DOBASE=BASE_OCT
+
+o2h: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_OCT -DOBASE=BASE_HEX
+
+h2o: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_HEX -DOBASE=BASE_OCT
+
+d2h: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_DEC -DOBASE=BASE_HEX
+
+h2d: r2r.c
+	$(CC) $(CFLAGS) r2r.c -o $@ -DBIN='"$@"' -DIBASE=BASE_HEX -DOBASE=BASE_DEC
 
 install:
-	cp b2d $(INSTALLDIR)
-	cp b2h $(INSTALLDIR)
-	cp d2b $(INSTALLDIR)
-	cp d2h $(INSTALLDIR)
-	cp h2b $(INSTALLDIR)
-	cp h2d $(INSTALLDIR)
-	cp o2b $(INSTALLDIR)
-	cp b2o $(INSTALLDIR)
+	cp $(TARGETS) $(INSTALLDIR)
 
 uninstall:
-	rm -rf $(INSTALLDIR)/b2d
-	rm -rf $(INSTALLDIR)/b2h
-	rm -rf $(INSTALLDIR)/d2b
-	rm -rf $(INSTALLDIR)/d2h
-	rm -rf $(INSTALLDIR)/h2b
-	rm -rf $(INSTALLDIR)/h2d
-	rm -rf $(INSTALLDIR)/o2b
-	rm -rf $(INSTALLDIR)/b2o
+	rm -rf $(addprefix $(INSTALLDIR), $(TARGETS))
 
 clean:
-	rm -rf b2d b2h d2b d2h h2b h2d o2b b2o
+	rm -rf $(TARGETS)
 

@@ -1,20 +1,26 @@
 # r2r
 
-Tools for converting between binary, decimal, and hex numbers.
+tools for converting between binary, decimal, and hex numbers.
 
-Each binary performs one type of conversion.
+each binary performs one type of conversion.
 
-Binaries convert values from stdin.
-Each value's result is printed on its own line.
+binaries convert values from stdin.
+each value's result is printed on its own line.
 
-Underscores (`_`) are ignored.
-For hex, both uppercase and lowercase letters work.
+underscores (`_`) are ignored.
+for hex, both uppercase and lowercase letters work.
 
 ## building & installing
 
-1. build: `make`
+1. build:
+   1. (optional) modify the makefile's build targets.
+      you can use `gentargets.py` to generate all possible base combinations,
+      which you can paste into the makefile.
+   2. run `make`
 2. install:
-   1. set the makefile's `INSTALLDIR` variable according to your system.
+   1. (optional) set the makefile's `INSTALLDIR` variable according to your system.
       this is the path where the binaries will be copied.
-   2. `make install`
+   2. run `make install`
+
+you can run `make uninstall` to delete the binaries copied by `make install`.
 
